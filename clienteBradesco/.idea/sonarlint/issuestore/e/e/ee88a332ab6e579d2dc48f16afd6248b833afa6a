@@ -1,0 +1,5 @@
+
+{
+java:S1488"eImmediately return this expression instead of assigning it to the temporary variable "contaResponse".(¦Æé´
+q
+java:S3655"TCall "newCliente.isPresent()" or "!newCliente.isEmpty()" before accessing the value.(øÚµè8„µô—è0
