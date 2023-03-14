@@ -1,6 +1,6 @@
 package com.clientesbanco.controller;
 
-import com.clientesbanco.domain.Clientes;
+import com.clientesbanco.domain.Cliente;
 import com.clientesbanco.web.ClientesServices;
 import com.clientesbanco.web.dto.ContaDTO;
 import com.clientesbanco.web.request.ContasRequestService;
@@ -30,30 +30,32 @@ public class ClienteController {
     @Autowired
     ContasRequestService contasRequestService;
 
-
     @PostMapping("/clienteCadastro")
-      public Clientes cadastrar(@RequestBody @Valid Clientes clientes){
-        return clientesServices.cadastrar(clientes);
+      public Cliente cadastrar(@RequestBody Cliente cliente){
+        return clientesServices.cadastrar(cliente);
     }
 
     @DeleteMapping("/clienteDelete/{id}")
     public void deletar(@PathVariable(name = "id")String id){
         clientesServices.deletar(id);
     }
+
     @Valid
     @PutMapping("/clienteAtualizar/{id}")
-    public Optional<Clientes> atualizar(@PathVariable(name = "id")String id, @RequestBody Clientes clientes){
-       return clientesServices.atualizar(id, clientes);
+    public Optional<Cliente> atualizar(@PathVariable(name = "id")String id, @RequestBody Cliente cliente){
+       return clientesServices.atualizar(id, cliente);
     }
+
     @Valid
     @GetMapping("/buscarTodos")
-    public List<Clientes> buscarTodos(){
+    public List<Cliente> buscarTodos(){
        return clientesServices.buscarTodos();
     }
     @GetMapping("/buscarClientePorId/{id}")
-    public Optional<Clientes> buscarPorId(@PathVariable(name = "id") String id){
+    public Optional<Cliente> buscarPorId(@PathVariable(name = "id") String id){
         return clientesServices.buscarPorId(id);
     }
+
     @ResponseBody
     @Valid
     @GetMapping(value = "/buscarConta/{contaId}")
@@ -61,10 +63,16 @@ public class ClienteController {
         ContaDTO contaDTO = contasRequestService.consultaConta(contaId);
         return new ResponseEntity<ContaDTO>(contaDTO, HttpStatus.OK);
     }
+
     @ResponseBody
     @GetMapping(value = "/converterConta/{contaId}")
     public ResponseEntity<ContaClienteResponse> converterContaPorId(@PathVariable(name = "contaId") String contaId){
         ContaClienteResponse conta = clientesServices.buscarDadosCompletos(contaId);
         return new ResponseEntity<ContaClienteResponse>(conta, HttpStatus.OK);
+    }
+
+    @PutMapping("/validarDuplicidadeCpf/{cpf}")
+    public HttpStatus validarDuplicidadeDeCpf(@PathVariable(name = "cpf")String cpf){
+        return clientesServices.verificarDuplicidadeDeCpf(cpf);
     }
 }

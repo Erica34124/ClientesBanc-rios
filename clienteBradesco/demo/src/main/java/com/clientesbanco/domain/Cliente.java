@@ -1,21 +1,24 @@
 package com.clientesbanco.domain;
 
-import jakarta.validation.constraints.NotNull;
-import org.hibernate.validator.constraints.NotBlank;
+import com.clientesbanco.web.ClientesServices;
+import jakarta.validation.constraints.NotBlank;
 
 import java.util.List;
 import java.util.Objects;
 
-public class Clientes {
+
+
+//pesquisar o que o componente
+public class Cliente {
     private String id;
     private String nome;
-    @NotNull
+
     @NotBlank
-    private Cpf cpf;
+    private String cpf;
     private List<Telefone> telefones;
     private Endereco endereco;
 
-    public Clientes(String id, String nome, Cpf cpf, List<Telefone> telefones, Endereco endereco) {
+    public Cliente(String id, String nome, String cpf, List<Telefone> telefones, Endereco endereco) {
         this.id = id;
         this.nome = nome;
         this.cpf = cpf;
@@ -23,7 +26,7 @@ public class Clientes {
         this.endereco = endereco;
     }
 
-    public Clientes() {
+    public Cliente() {
     }
 
     public String getId() {
@@ -42,14 +45,14 @@ public class Clientes {
         this.nome = nome;
     }
 
-    @NotNull
-    @NotBlank
-    public Cpf getCpf() {
+
+    public String getCpf() {
         return cpf;
     }
 
-    public void setCpf(Cpf cpf) {
-        this.cpf = cpf;
+    public void setCpf(String cpf) {
+        ClientesServices validar = new ClientesServices();
+        this.cpf = validar.cpfValidar(cpf);
     }
 
     public List<Telefone> getTelefones() {
@@ -71,8 +74,8 @@ public class Clientes {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Clientes clientes)) return false;
-        return id.equals(clientes.id);
+        if (!(o instanceof Cliente cliente)) return false;
+        return id.equals(cliente.id);
     }
 
     @Override

@@ -1,6 +1,6 @@
 package com.clientesbanco.web;
 
-import com.clientesbanco.domain.Clientes;
+import com.clientesbanco.domain.Cliente;
 import com.clientesbanco.repository.ClientesRepository;
 import com.clientesbanco.usecase.helper.ContaClienteHelper;
 import com.clientesbanco.web.dto.ContaDTO;
@@ -28,19 +28,18 @@ public class ClientesServices implements ClienteDatabaseOperations {
     ContaClienteHelper contaClienteHelper;
     Logger logger = LogManager.getLogger(this.getClass());
 
-    public ClientesServices(ClientesRepository repository) {
-        this.repository = repository;
+    public ClientesServices() {
     }
 
     @Override
-    public Clientes cadastrar(Clientes cliente) {
+    public Cliente cadastrar(Cliente cliente) {
         cliente.setId(UUID.randomUUID().toString());
         return repository.save(cliente);
     }
 
     @Override
     public void deletar(String id) {
-        Optional<Clientes> cliente = repository.findById(id);
+        Optional<Cliente> cliente = repository.findById(id);
         if (cliente.isPresent()) {
             repository.deleteById(id);
             logger.info("Cliente deletado com sucessso! ");
@@ -51,8 +50,8 @@ public class ClientesServices implements ClienteDatabaseOperations {
     }
 
     @Override
-    public Optional<Clientes> atualizar(String id, Clientes clientes) {
-        Optional<Clientes> cliente = repository.findById(id);
+    public Optional<Cliente> atualizar(String id, Cliente clientes) {
+        Optional<Cliente> cliente = repository.findById(id);
         if (cliente.isPresent()) {
             cliente.get().setNome(clientes.getNome());
             cliente.get().setEndereco(clientes.getEndereco());
@@ -65,13 +64,14 @@ public class ClientesServices implements ClienteDatabaseOperations {
     }
 
     @Override
-    public List<Clientes> buscarTodos() {
-        return repository.findAll();
+    public List<Cliente> buscarTodos() {
+        List<Cliente> todosClientes = repository.findAll();
+        return todosClientes;
     }
 
     @Override
-    public Optional<Clientes> buscarPorId(String id) {
-        Optional<Clientes> cliente = repository.findById(id);
+    public Optional<Cliente> buscarPorId(String id) {
+        Optional<Cliente> cliente = repository.findById(id);
         if (cliente.isPresent()) {
             return repository.findById(id);
         } else {
@@ -83,12 +83,30 @@ public class ClientesServices implements ClienteDatabaseOperations {
     @Override
     public ContaClienteResponse buscarDadosCompletos(String contaId) {
         ContaDTO contaDTO = consultaConta(contaId);
-        Optional<Clientes> clientes = repository.findById(contaDTO.getClienteId());
-        if (clientes.isPresent()) {
-          return contaClienteHelper.conversorCliente(contaId , clientes);
-        }else{
+        Optional<Cliente> cliente = repository.findById(contaDTO.getClienteId());
+        if (cliente.isPresent()) {
+            return contaClienteHelper.conversorCliente(contaId, cliente);
+        } else {
             throw new ResponseStatusException
                     (HttpStatus.NOT_FOUND, "Conversão incorreta ");
         }
+
+    }
+    public HttpStatus verificarDuplicidadeDeCpf(String cpf) {
+        Optional<Cliente> cpfBanco = repository.findByCpf(cpf);
+        logger.info("CPF já cadastrado", cpfBanco);
+        if (cpfBanco.isPresent()) {
+            throw new ResponseStatusException
+                    (HttpStatus.FORBIDDEN, "CPF já cadastrado");
+        } else {
+            return HttpStatus.OK;
+        }
+    }
+    public String cpfValidar(String cpf) {
+
+        if (cpf == null || !cpf.matches("\\d{3}\\.\\d{3}\\.\\d{3}\\-\\d{2}")) {
+            throw new IllegalArgumentException("Cpf inváldo! ");
+        }
+        return cpf;
     }
 }

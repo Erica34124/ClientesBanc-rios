@@ -1,14 +1,12 @@
 package com.clientesbanco.web.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 
-import java.io.Serializable;
 @Service
 @Data
-public class ContaDTO implements Serializable {
-    private static final long serialVerdionUID = 1L;
-
+public class ContaDTO {
     private String id;
     private Boolean ativo;
     private String clienteId;

@@ -1,19 +1,22 @@
 package com.clientesbanco.web.response;
 
-import com.clientesbanco.domain.Cpf;
 import com.clientesbanco.domain.Endereco;
 import com.clientesbanco.domain.Telefone;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Builder;
 import lombok.Data;
 
 import java.util.List;
+
 @Builder
 @Data
 public class ContaClienteResponse {
     private String id;
     private String ClienteId;
     private String nome;
-    private Cpf cpf;
+    //fazer dupla verificação
+    @NotEmpty(message = "Cpf não pode estar vazio. ")
+    private String cpf;
     private List<Telefone> telefones;
     private Endereco endereco;
     private Boolean ativo;
@@ -22,7 +25,7 @@ public class ContaClienteResponse {
     private Double taxaSaque;
     private Boolean chequeEspecial;
 
-    public ContaClienteResponse(String id, String clienteId, String nome, Cpf cpf, List<Telefone> telefones, Endereco endereco, Boolean ativo, Double saldo, String cartao, Double taxaSaque, Boolean chequeEspecial) {
+    public ContaClienteResponse(String id, String clienteId, String nome, String cpf, List<Telefone> telefones, Endereco endereco, Boolean ativo, Double saldo, String cartao, Double taxaSaque, Boolean chequeEspecial) {
         this.id = id;
         ClienteId = clienteId;
         this.nome = nome;
