@@ -1,7 +1,6 @@
 package com.clientesbanco.usecase.helper;
 
 import com.clientesbanco.domain.Telefone;
-
 import java.util.List;
 
 public class TelefoneHelper {
@@ -17,4 +16,3 @@ public class TelefoneHelper {
        return tel;
     }
 }
-

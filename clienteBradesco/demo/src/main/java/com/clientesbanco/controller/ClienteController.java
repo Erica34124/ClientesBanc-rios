@@ -1,9 +1,11 @@
 package com.clientesbanco.controller;
 
 import com.clientesbanco.domain.Cliente;
-import com.clientesbanco.web.ClientesServices;
+import com.clientesbanco.web.ClientesServicesImpl;
 import com.clientesbanco.web.dto.ContaDTO;
+import com.clientesbanco.web.request.ClienteRequest;
 import com.clientesbanco.web.request.ContasRequestService;
+import com.clientesbanco.web.response.ClienteResponse;
 import com.clientesbanco.web.response.ContaClienteResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,34 +28,35 @@ import java.util.Optional;
 @RequestMapping(path = "/clientes")
 public class ClienteController {
     @Autowired
-    ClientesServices clientesServices;
+    ClientesServicesImpl clientesServicesImpl;
     @Autowired
     ContasRequestService contasRequestService;
 
     @PostMapping("/clienteCadastro")
-      public Cliente cadastrar(@RequestBody Cliente cliente){
-        return clientesServices.cadastrar(cliente);
+      public ClienteResponse cadastrar(@RequestBody ClienteRequest request){
+        return clientesServicesImpl.cadastrar(request);
     }
 
     @DeleteMapping("/clienteDelete/{id}")
     public void deletar(@PathVariable(name = "id")String id){
-        clientesServices.deletar(id);
+        clientesServicesImpl.deletar(id);
     }
 
     @Valid
     @PutMapping("/clienteAtualizar/{id}")
     public Optional<Cliente> atualizar(@PathVariable(name = "id")String id, @RequestBody Cliente cliente){
-       return clientesServices.atualizar(id, cliente);
+       return clientesServicesImpl.atualizar(id, cliente);
     }
 
     @Valid
     @GetMapping("/buscarTodos")
     public List<Cliente> buscarTodos(){
-       return clientesServices.buscarTodos();
+       return clientesServicesImpl.buscarTodos();
     }
+
     @GetMapping("/buscarClientePorId/{id}")
     public Optional<Cliente> buscarPorId(@PathVariable(name = "id") String id){
-        return clientesServices.buscarPorId(id);
+        return clientesServicesImpl.buscarPorId(id);
     }
 
     @ResponseBody
@@ -67,12 +70,7 @@ public class ClienteController {
     @ResponseBody
     @GetMapping(value = "/converterConta/{contaId}")
     public ResponseEntity<ContaClienteResponse> converterContaPorId(@PathVariable(name = "contaId") String contaId){
-        ContaClienteResponse conta = clientesServices.buscarDadosCompletos(contaId);
+        ContaClienteResponse conta = clientesServicesImpl.buscarDadosCompletos(contaId);
         return new ResponseEntity<ContaClienteResponse>(conta, HttpStatus.OK);
-    }
-
-    @PutMapping("/validarDuplicidadeCpf/{cpf}")
-    public HttpStatus validarDuplicidadeDeCpf(@PathVariable(name = "cpf")String cpf){
-        return clientesServices.verificarDuplicidadeDeCpf(cpf);
     }
 }

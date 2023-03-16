@@ -1,6 +1,5 @@
 package com.clientesbanco.web.dto;
 
-import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import org.springframework.stereotype.Service;
 

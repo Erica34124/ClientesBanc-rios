@@ -1,19 +1,11 @@
 package com.clientesbanco.domain;
 
-import com.clientesbanco.web.ClientesServices;
-import jakarta.validation.constraints.NotBlank;
-
 import java.util.List;
 import java.util.Objects;
 
-
-
-//pesquisar o que o componente
 public class Cliente {
     private String id;
     private String nome;
-
-    @NotBlank
     private String cpf;
     private List<Telefone> telefones;
     private Endereco endereco;
@@ -45,14 +37,12 @@ public class Cliente {
         this.nome = nome;
     }
 
-
     public String getCpf() {
         return cpf;
     }
 
     public void setCpf(String cpf) {
-        ClientesServices validar = new ClientesServices();
-        this.cpf = validar.cpfValidar(cpf);
+        this.cpf = cpf;
     }
 
     public List<Telefone> getTelefones() {

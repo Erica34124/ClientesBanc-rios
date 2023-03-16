@@ -2,8 +2,12 @@ package com.clientesbanco.web;
 
 import com.clientesbanco.domain.Cliente;
 import com.clientesbanco.repository.ClientesRepository;
+import com.clientesbanco.usecase.helper.ClienteRequestHelper;
+import com.clientesbanco.usecase.helper.ClienteResponseHelper;
 import com.clientesbanco.usecase.helper.ContaClienteHelper;
 import com.clientesbanco.web.dto.ContaDTO;
+import com.clientesbanco.web.request.ClienteRequest;
+import com.clientesbanco.web.response.ClienteResponse;
 import com.clientesbanco.web.response.ContaClienteResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,29 +16,38 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 import static com.clientesbanco.web.request.ContasRequestService.consultaConta;
 
 @Service
 @Validated
-public class ClientesServices implements ClienteDatabaseOperations {
+public class ClientesServicesImpl implements ClienteServices {
     @Autowired
     ClientesRepository repository;
     @Autowired
     ContaClienteHelper contaClienteHelper;
+    @Autowired
+    ClienteRequestHelper clienteRequestHelper;
+    @Autowired
+    ClienteResponseHelper clienteResponseHelper;
     Logger logger = LogManager.getLogger(this.getClass());
 
-    public ClientesServices() {
-    }
-
     @Override
-    public Cliente cadastrar(Cliente cliente) {
-        cliente.setId(UUID.randomUUID().toString());
-        return repository.save(cliente);
+    public ClienteResponse cadastrar(ClienteRequest request) {
+        Optional<Cliente> cliente = repository.findByCpf(request.getCpf());
+        if (cliente.isPresent()) {
+            throw new ResponseStatusException
+                    (HttpStatus.BAD_REQUEST, "Cliente já cadastrado. ");
+        }
+        verificarDuplicidadeDeCpf(request.getCpf());
+        repository.save(clienteRequestHelper.converterRequest(request));
+        return clienteResponseHelper.converterResponse(request);
+        //transformar clienteResquest em cliente
+        //Salvar objeto do tipo cliente
+        //transformar retorno do banco em cliente response
+        //retornar cliente response
     }
 
     @Override
@@ -90,18 +103,17 @@ public class ClientesServices implements ClienteDatabaseOperations {
             throw new ResponseStatusException
                     (HttpStatus.NOT_FOUND, "Conversão incorreta ");
         }
-
     }
-    public HttpStatus verificarDuplicidadeDeCpf(String cpf) {
+
+    public void verificarDuplicidadeDeCpf(String cpf) {
         Optional<Cliente> cpfBanco = repository.findByCpf(cpf);
         logger.info("CPF já cadastrado", cpfBanco);
         if (cpfBanco.isPresent()) {
             throw new ResponseStatusException
                     (HttpStatus.FORBIDDEN, "CPF já cadastrado");
-        } else {
-            return HttpStatus.OK;
         }
     }
+
     public String cpfValidar(String cpf) {
 
         if (cpf == null || !cpf.matches("\\d{3}\\.\\d{3}\\.\\d{3}\\-\\d{2}")) {

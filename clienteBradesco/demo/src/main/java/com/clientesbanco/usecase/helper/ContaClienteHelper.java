@@ -4,9 +4,7 @@ import com.clientesbanco.domain.Cliente;
 import com.clientesbanco.web.dto.ContaDTO;
 import com.clientesbanco.web.response.ContaClienteResponse;
 import org.springframework.stereotype.Service;
-
 import java.util.Optional;
-
 import static com.clientesbanco.web.request.ContasRequestService.consultaConta;
 
 @Service
@@ -28,7 +26,6 @@ public class ContaClienteHelper {
                 .telefones(newCliente.get().getTelefones())
                 .cartao(contaDTO.getCartao())
                 .build();
-
         return contaResponse;
     }
 }
