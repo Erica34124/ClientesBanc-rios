@@ -2,20 +2,25 @@ package com.clientesbanco.web.request;
 
 import com.clientesbanco.domain.Endereco;
 import com.clientesbanco.domain.Telefone;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.br.CPF;
-import java.util.List;
 
-public class ClienteRequest{
+
+public class ClienteRequest implements IclienteRequest{
     @NotBlank(message = "Nome é obrigatório! ")
     private String nome;
     @NotBlank
     @CPF(message = "Cpf com onze digitos pontos e traço. Ex: (111.111.111-11)." )
     private String cpf;
+    @JsonProperty
     private Endereco endereco;
-    private List<Telefone> telefones;
+    private Telefone telefones;
 
-    public ClienteRequest(String nome, String cpf, List<Telefone> telefones, Endereco endereco) {
+    public ClienteRequest() {
+    }
+
+    public ClienteRequest(String nome, String cpf, Telefone telefones, Endereco endereco) {
         this.nome = nome;
         this.cpf = cpf;
         this.telefones = telefones;
@@ -30,7 +35,7 @@ public class ClienteRequest{
         this.nome = nome;
     }
 
-    public String getCpf() {
+    public @NotBlank @CPF(message = "Cpf com onze digitos pontos e traço. Ex: (111.111.111-11).") String getCpf() {
         return cpf;
     }
 
@@ -45,12 +50,13 @@ public class ClienteRequest{
     public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
     }
-
-    public List<Telefone> getTelefones() {
+    public Telefone getTelefones() {
         return telefones;
     }
 
-    public void setTelefones(List<Telefone> telefones) {
+    public void setTelefones(Telefone telefones) {
         this.telefones = telefones;
     }
+
+
 }

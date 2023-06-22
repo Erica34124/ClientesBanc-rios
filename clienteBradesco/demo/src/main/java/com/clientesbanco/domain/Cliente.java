@@ -1,24 +1,23 @@
 package com.clientesbanco.domain;
 
-import java.util.List;
 import java.util.Objects;
 
 public class Cliente {
     private String id;
     private String nome;
     private String cpf;
-    private List<Telefone> telefones;
+    private Telefone telefones;
     private Endereco endereco;
 
-    public Cliente(String id, String nome, String cpf, List<Telefone> telefones, Endereco endereco) {
+    public Cliente() {
+    }
+
+    public Cliente(String id, String nome, String cpf, Telefone telefones, Endereco endereco) {
         this.id = id;
         this.nome = nome;
         this.cpf = cpf;
         this.telefones = telefones;
         this.endereco = endereco;
-    }
-
-    public Cliente() {
     }
 
     public String getId() {
@@ -45,11 +44,11 @@ public class Cliente {
         this.cpf = cpf;
     }
 
-    public List<Telefone> getTelefones() {
+    public Telefone getTelefones() {
         return telefones;
     }
 
-    public void setTelefones(List<Telefone> telefones) {
+    public void setTelefones(Telefone telefones) {
         this.telefones = telefones;
     }
 
@@ -59,13 +58,6 @@ public class Cliente {
 
     public void setEndereco(Endereco endereco) {
         this.endereco = endereco;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Cliente cliente)) return false;
-        return id.equals(cliente.id);
     }
 
     @Override

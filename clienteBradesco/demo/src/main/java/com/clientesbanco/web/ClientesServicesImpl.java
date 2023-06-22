@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -25,29 +26,27 @@ import static com.clientesbanco.web.request.ContasRequestService.consultaConta;
 @Validated
 public class ClientesServicesImpl implements ClienteServices {
     @Autowired
-    ClientesRepository repository;
+    private ClientesRepository repository;
     @Autowired
-    ContaClienteHelper contaClienteHelper;
+    private ContaClienteHelper contaClienteHelper;
     @Autowired
-    ClienteRequestHelper clienteRequestHelper;
+    private ClienteRequestHelper clienteRequestHelper;
     @Autowired
-    ClienteResponseHelper clienteResponseHelper;
+    private ClienteResponseHelper clienteResponseHelper;
     Logger logger = LogManager.getLogger(this.getClass());
 
     @Override
     public ClienteResponse cadastrar(ClienteRequest request) {
-        Optional<Cliente> cliente = repository.findByCpf(request.getCpf());
-        if (cliente.isPresent()) {
+        if (this.verificarDuplicidadeDeCpf(request.getCpf())){
+            this.cpfValidar(request.getCpf());
+            Cliente c = clienteRequestHelper.converterRequest(request);
+            c = repository.save(c);
+            logger.info("Cliente cadastrado com sucessso! ");
+            return clienteResponseHelper.converterResponse(c);
+        }else {
             throw new ResponseStatusException
-                    (HttpStatus.BAD_REQUEST, "Cliente já cadastrado. ");
+                    (HttpStatus.FORBIDDEN, "CPF já cadastrado no sistema");
         }
-        verificarDuplicidadeDeCpf(request.getCpf());
-        repository.save(clienteRequestHelper.converterRequest(request));
-        return clienteResponseHelper.converterResponse(request);
-        //transformar clienteResquest em cliente
-        //Salvar objeto do tipo cliente
-        //transformar retorno do banco em cliente response
-        //retornar cliente response
     }
 
     @Override
@@ -58,7 +57,7 @@ public class ClientesServicesImpl implements ClienteServices {
             logger.info("Cliente deletado com sucessso! ");
         } else {
             throw new ResponseStatusException
-                    (HttpStatus.NOT_FOUND, "Cliente não encontrado");
+                    (HttpStatus.FORBIDDEN, "Cliente não encontrado no sistema");
         }
     }
 
@@ -74,6 +73,7 @@ public class ClientesServicesImpl implements ClienteServices {
         }
         throw new ResponseStatusException
                 (HttpStatus.NOT_FOUND, "Cliente não encontrado");
+
     }
 
     @Override
@@ -98,20 +98,23 @@ public class ClientesServicesImpl implements ClienteServices {
         ContaDTO contaDTO = consultaConta(contaId);
         Optional<Cliente> cliente = repository.findById(contaDTO.getClienteId());
         if (cliente.isPresent()) {
-            return contaClienteHelper.conversorCliente(contaId, cliente);
+            return contaClienteHelper.conversorCliente(contaDTO, cliente);
         } else {
             throw new ResponseStatusException
                     (HttpStatus.NOT_FOUND, "Conversão incorreta ");
         }
     }
 
-    public void verificarDuplicidadeDeCpf(String cpf) {
+    public Boolean verificarDuplicidadeDeCpf(String cpf) {
         Optional<Cliente> cpfBanco = repository.findByCpf(cpf);
-        logger.info("CPF já cadastrado", cpfBanco);
         if (cpfBanco.isPresent()) {
             throw new ResponseStatusException
                     (HttpStatus.FORBIDDEN, "CPF já cadastrado");
+
+        } else {
+            logger.info("Cliente não consta em banco de dados! ");
         }
+        return true;
     }
 
     public String cpfValidar(String cpf) {

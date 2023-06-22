@@ -12,9 +12,8 @@ public class ContasRequestService {
 
     public static ContaDTO consultaConta(String contaId) {
         String url = String.format("http://localhost:8089/adm/buscarContaPorId/ %s ", contaId);
-        ContaDTO request = new RestTemplate().getForEntity(url, ContaDTO.class).getBody();
         try {
-            return request;
+            return new RestTemplate().getForEntity(url, ContaDTO.class).getBody();
         } catch (ResourceAccessException exception) {
             throw new ResponseStatusException
                     (HttpStatus.SERVICE_UNAVAILABLE, "Serviço inativo ");

@@ -32,14 +32,20 @@ public class ClienteController {
     @Autowired
     ContasRequestService contasRequestService;
 
-    @PostMapping("/clienteCadastro")
-      public ClienteResponse cadastrar(@RequestBody ClienteRequest request){
-        return clientesServicesImpl.cadastrar(request);
+    @PostMapping(value = "/clienteCadastro", consumes = "application/json", produces = "application/json")
+      public  ResponseEntity<ClienteResponse> cadastrar(@RequestBody ClienteRequest request){
+         ClienteResponse response =  clientesServicesImpl.cadastrar(request);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/clienteDelete/{id}")
-    public void deletar(@PathVariable(name = "id")String id){
-        clientesServicesImpl.deletar(id);
+    public HttpStatus deletar(@PathVariable(name = "id")String id){
+        try{
+            clientesServicesImpl.deletar(id);
+            return HttpStatus.OK;
+        }catch (Exception e){
+            return HttpStatus.BAD_REQUEST;
+        }
     }
 
     @Valid
@@ -69,8 +75,12 @@ public class ClienteController {
 
     @ResponseBody
     @GetMapping(value = "/converterConta/{contaId}")
-    public ResponseEntity<ContaClienteResponse> converterContaPorId(@PathVariable(name = "contaId") String contaId){
-        ContaClienteResponse conta = clientesServicesImpl.buscarDadosCompletos(contaId);
-        return new ResponseEntity<ContaClienteResponse>(conta, HttpStatus.OK);
+    public ResponseEntity<ContaClienteResponse> converterContaPorId(@PathVariable(name = "contaId") String contaId) {
+        if (!contaId.equals(null)) {
+            ContaClienteResponse conta = clientesServicesImpl.buscarDadosCompletos(contaId);
+            return new ResponseEntity<ContaClienteResponse>(conta, HttpStatus.OK);
+        } else {
+            return new ResponseEntity<ContaClienteResponse>(HttpStatus.BAD_REQUEST);
+        }
     }
 }

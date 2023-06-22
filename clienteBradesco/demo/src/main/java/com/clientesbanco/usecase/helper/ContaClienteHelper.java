@@ -4,14 +4,16 @@ import com.clientesbanco.domain.Cliente;
 import com.clientesbanco.web.dto.ContaDTO;
 import com.clientesbanco.web.response.ContaClienteResponse;
 import org.springframework.stereotype.Service;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.Optional;
-import static com.clientesbanco.web.request.ContasRequestService.consultaConta;
+
 
 @Service
 public class ContaClienteHelper {
-
-    public ContaClienteResponse conversorCliente(String contaId, Optional<Cliente> newCliente) {
-        ContaDTO contaDTO = consultaConta(contaId);
+    Logger logger = LogManager.getLogger(this.getClass());
+    public ContaClienteResponse conversorCliente(ContaDTO contaDTO, Optional<Cliente> newCliente) {
         ContaClienteResponse contaResponse = ContaClienteResponse.builder()
                 .id(contaDTO.getId())
                 .cpf(newCliente.get().getCpf())
@@ -26,6 +28,8 @@ public class ContaClienteHelper {
                 .telefones(newCliente.get().getTelefones())
                 .cartao(contaDTO.getCartao())
                 .build();
+
+        logger.info("Conversão realizada com sucesso! ");
         return contaResponse;
     }
 }

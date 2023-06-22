@@ -2,13 +2,11 @@ package com.clientesbanco.web.response;
 import com.clientesbanco.domain.Endereco;
 import com.clientesbanco.domain.Telefone;
 
-import java.util.List;
-
 public class ClienteResponse{
     private String nome;
     private String cpf;
     private Endereco endereco;
-    private List<Telefone> telefones;
+    private Telefone telefones;
 
     public String getNome() {
         return nome;
@@ -34,11 +32,11 @@ public class ClienteResponse{
         this.endereco = endereco;
     }
 
-    public List<Telefone> getTelefones() {
+    public Telefone getTelefones() {
         return telefones;
     }
 
-    public void setTelefones(List<Telefone> telefones) {
+    public void setTelefones(Telefone telefones) {
         this.telefones = telefones;
     }
 }
