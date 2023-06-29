@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import org.hibernate.validator.constraints.br.CPF;
 
 
-public class ClienteRequest implements IclienteRequest{
+public class ClienteRequest{
     @NotBlank(message = "Nome é obrigatório! ")
     private String nome;
     @NotBlank

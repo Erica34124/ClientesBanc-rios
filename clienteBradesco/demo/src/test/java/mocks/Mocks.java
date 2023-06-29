@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Mocks {
-    public static Cliente clientWithAllFields(){
+    public static Cliente clientWithAllFields() {
         Cliente cliente = new Cliente();
         cliente.setNome("Ana");
         cliente.setId("123456");
@@ -23,7 +23,7 @@ public class Mocks {
         return cliente;
     }
 
-    public static Cliente clientWithCpfEmpty(){
+    public static Cliente clientWithCpfEmpty() {
         Cliente cliente = new Cliente();
         cliente.setNome("Ana");
         cliente.setId("123456");
@@ -34,7 +34,8 @@ public class Mocks {
 
         return cliente;
     }
-    public static ClienteRequest clienteRequestWithAllFields(){
+
+    public static ClienteRequest clienteRequestWithAllFields() {
         ClienteRequest clienteRequest = new ClienteRequest();
         clienteRequest.setNome("Ana");
         clienteRequest.setCpf("123.456.789-10");
@@ -45,7 +46,7 @@ public class Mocks {
         return clienteRequest;
     }
 
-    public static ClienteResponse clienteResponseWithAllFields(){
+    public static ClienteResponse clienteResponseWithAllFields() {
         ClienteResponse clienteResponse = new ClienteResponse();
         clienteResponse.setNome("Ana");
         clienteResponse.setCpf("123.456.789-10");
@@ -57,22 +58,21 @@ public class Mocks {
     }
 
 
+    public static ContaDTO contaDTOWithAllFields() {
+        ContaDTO conta = new ContaDTO();
+        conta.setId("5647");
+        conta.setSaldo(2000d);
+        conta.setAtivo(true);
+        conta.setCartao("Master");
+        conta.setChequeEspecial(true);
+        conta.setClienteNome("Claudia");
+        conta.setClienteId("456");
+        conta.setTaxaSaque(0.2d);
 
-    public static ContaDTO contaDTOWithAllFields(){
-        ContaDTO.ContaDTOBuilder conta = ContaDTO.builder()
-                .id("5647")
-                .saldo(2000d)
-                .ativo(true)
-                .cartao("Mater")
-                .chequeEspecial(true)
-                .clienteNome("Claudia")
-                .taxaSaque(0.2d)
-                .clienteId("456");
-
-        return conta.build();
+        return conta;
     }
 
-    public static ContaClienteResponse contaClienteResponseWithAllFields(){
+    public static ContaClienteResponse contaClienteResponseWithAllFields() {
         ContaClienteResponse contaResponse = ContaClienteResponse.builder()
                 .id("1234")
                 .cpf("555.555.555-55")
@@ -91,7 +91,7 @@ public class Mocks {
         return contaResponse;
     }
 
-    public static List<Cliente> clientRepositoryWithAllFields(){
+    public static List<Cliente> clientRepositoryWithAllFields() {
         List<Cliente> listaCliente = new ArrayList<>();
 
         Cliente cliente = new Cliente();

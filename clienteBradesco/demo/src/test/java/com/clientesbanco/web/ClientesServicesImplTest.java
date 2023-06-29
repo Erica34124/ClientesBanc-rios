@@ -176,6 +176,7 @@ class ClientesServicesImplTest extends ConfigMock {
         when(contaClienteHelper.conversorCliente(conta, Optional.of(cliente))).thenReturn(response);
 
         //Assert
+        //Assert.assertEquals();
         clientesServices.buscarDadosCompletos(any());
     }
 

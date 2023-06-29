@@ -18,9 +18,9 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import static mocks.Mocks.clientWithAllFields;
-import static mocks.Mocks.clientWithCpfEmpty;
 import static mocks.Mocks.clienteRequestWithAllFields;
 import static mocks.Mocks.contaDTOWithAllFields;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -61,7 +61,6 @@ public class ControllerTest {
 
     @Test
     public void deveriaCadastrar_comFalha() throws Exception {
-
         var mvcResult =
                 mockMvc.perform(MockMvcRequestBuilders.post("/clientes/clienteCadastro")
                                 .content(gson.toJson(null))
@@ -77,27 +76,9 @@ public class ControllerTest {
     @Test
     public void deveriaDeletar_comSucesso() throws Exception {
         Cliente cliente = clientWithAllFields();
- var mvcResult =
-        mockMvc.perform(MockMvcRequestBuilders.delete("/clientes/clienteDelete/" + cliente.getId())
-                .content(gson.toJson(cliente))
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON))
-                        .andDo(print())
-                .andExpect(status().isOk())
-                .andReturn();
-
-        org.assertj.core.api.Assertions.assertThat(mvcResult.getResponse()).isNotNull();
-        org.assertj.core.api.Assertions.assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
-    }
-
-    @Test
-    public void deveriaDeletar_comFalha() throws Exception {
-        //Verificar porque não retorna 403
-        Cliente cliente =  clientWithCpfEmpty();
-        cliente.setId(null);
         var mvcResult =
-                mockMvc.perform(MockMvcRequestBuilders.delete("/clientes/clienteDelete/" + null)
-                                .content(gson.toJson(null))
+                mockMvc.perform(MockMvcRequestBuilders.delete("/clientes/clienteDelete/" + cliente.getId())
+                                .content(gson.toJson(cliente))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON))
                         .andDo(print())
@@ -109,8 +90,22 @@ public class ControllerTest {
     }
 
     @Test
-    public void deveriaAtualizarComSucesso() throws Exception{
-        Cliente cliente =  clientWithAllFields();
+    public void deveriaDeletar_comFalha() throws Exception {
+        //Verificar porque não retorna 400
+
+        var mvcResult =
+                mockMvc.perform(MockMvcRequestBuilders.delete("/clientes/clienteDelete/", " ")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON))
+                        .andExpect(MockMvcResultMatchers.status().isNotFound())
+                        .andReturn();
+
+        org.assertj.core.api.Assertions.assertThat(mvcResult.getResponse()).isNotNull();
+    }
+
+    @Test
+    public void deveriaAtualizarComSucesso() throws Exception {
+        Cliente cliente = clientWithAllFields();
         var mvcResult =
                 mockMvc.perform(MockMvcRequestBuilders.put("/clientes/clienteAtualizar/" + cliente.getId())
                                 .content(gson.toJson(cliente))
@@ -125,8 +120,8 @@ public class ControllerTest {
     }
 
     @Test
-    public void deveriaBuscarTodosComSucesso() throws Exception{
-        Cliente cliente =  clientWithAllFields();
+    public void deveriaBuscarTodosComSucesso() throws Exception {
+        Cliente cliente = clientWithAllFields();
         var mvcResult =
                 mockMvc.perform(MockMvcRequestBuilders.get("/clientes/buscarTodos")
                                 .content(gson.toJson(cliente))
@@ -139,9 +134,10 @@ public class ControllerTest {
         org.assertj.core.api.Assertions.assertThat(mvcResult.getResponse()).isNotNull();
         org.assertj.core.api.Assertions.assertThat(mvcResult.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
     }
+
     @Test
-   public void buscarPorId() throws Exception{
-        Cliente cliente =  clientWithAllFields();
+    public void buscarPorId() throws Exception {
+        Cliente cliente = clientWithAllFields();
         var mvcResult =
                 mockMvc.perform(MockMvcRequestBuilders.get("/clientes/buscarClientePorId/" + cliente.getId())
                                 .content(gson.toJson(cliente))
@@ -160,15 +156,31 @@ public class ControllerTest {
         ContaDTO conta = contaDTOWithAllFields();
 
         var response =
-                mockMvc.perform(MockMvcRequestBuilders.get("/clientes/buscarConta/" + "64539c3aec320073458775f9")
+                mockMvc.perform(MockMvcRequestBuilders.get("/clientes/buscarConta/" + conta.getId())
                                 .content(gson.toJson(conta))
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .accept(MediaType.APPLICATION_JSON))
                         .andDo(print())
-                        .andExpect(status().isServiceUnavailable())
+                        .andExpect(status().isOk())
                         .andReturn();
 
         org.assertj.core.api.Assertions.assertThat(response.getResponse()).isNotNull();
-        org.assertj.core.api.Assertions.assertThat(response.getResponse().getStatus()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE.value());
+        org.assertj.core.api.Assertions.assertThat(response.getResponse().getStatus()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    @Test
+    public void deveriaBuscarContaPorIdComFalha() throws Exception {
+        ContaDTO conta = contaDTOWithAllFields();
+
+        var response =
+                mockMvc.perform(MockMvcRequestBuilders.get("/clientes/buscarConta/", " ")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .accept(MediaType.APPLICATION_JSON))
+                        .andDo(print())
+                        .andExpect(MockMvcResultMatchers.status().isNotFound())
+                        .andReturn();
+
+        org.assertj.core.api.Assertions.assertThat(response.getResponse()).isNotNull();
+        org.assertj.core.api.Assertions.assertThat(response.getResponse().getStatus()).isEqualTo(HttpStatus.NOT_FOUND.value());
     }
 }

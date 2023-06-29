@@ -9,7 +9,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.util.Optional;
 
-
 @Service
 public class ContaClienteHelper {
     Logger logger = LogManager.getLogger(this.getClass());

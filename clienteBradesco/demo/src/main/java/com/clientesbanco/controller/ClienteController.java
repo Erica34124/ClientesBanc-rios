@@ -8,6 +8,8 @@ import com.clientesbanco.web.request.ContasRequestService;
 import com.clientesbanco.web.response.ClienteResponse;
 import com.clientesbanco.web.response.ContaClienteResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,14 +40,10 @@ public class ClienteController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
-    @DeleteMapping("/clienteDelete/{id}")
-    public HttpStatus deletar(@PathVariable(name = "id")String id){
-        try{
-            clientesServicesImpl.deletar(id);
-            return HttpStatus.OK;
-        }catch (Exception e){
-            return HttpStatus.BAD_REQUEST;
-        }
+    @DeleteMapping(value = "/clienteDelete/{id}")
+    public HttpStatus deletar(@NotNull @NotBlank @PathVariable(name = "id")String id){
+        clientesServicesImpl.deletar(id);
+        return HttpStatus.OK;
     }
 
     @Valid
@@ -66,11 +64,9 @@ public class ClienteController {
     }
 
     @ResponseBody
-    @Valid
     @GetMapping(value = "/buscarConta/{contaId}")
-    public ResponseEntity<ContaDTO> buscarContaPorId(@PathVariable(name = "contaId") String contaId){
-        ContaDTO contaDTO = contasRequestService.consultaConta(contaId);
-        return new ResponseEntity<ContaDTO>(contaDTO, HttpStatus.OK);
+    public ContaDTO buscarContaPorId(@PathVariable(name = "contaId") String contaId){
+       return clientesServicesImpl.buscarContaPorId(contaId);
     }
 
     @ResponseBody

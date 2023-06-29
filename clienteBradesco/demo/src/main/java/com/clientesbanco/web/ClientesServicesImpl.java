@@ -7,14 +7,15 @@ import com.clientesbanco.usecase.helper.ClienteResponseHelper;
 import com.clientesbanco.usecase.helper.ContaClienteHelper;
 import com.clientesbanco.web.dto.ContaDTO;
 import com.clientesbanco.web.request.ClienteRequest;
+import com.clientesbanco.web.request.ContasRequestService;
 import com.clientesbanco.web.response.ClienteResponse;
 import com.clientesbanco.web.response.ContaClienteResponse;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
@@ -23,7 +24,6 @@ import java.util.Optional;
 import static com.clientesbanco.web.request.ContasRequestService.consultaConta;
 
 @Service
-@Validated
 public class ClientesServicesImpl implements ClienteServices {
     @Autowired
     private ClientesRepository repository;
@@ -33,10 +33,12 @@ public class ClientesServicesImpl implements ClienteServices {
     private ClienteRequestHelper clienteRequestHelper;
     @Autowired
     private ClienteResponseHelper clienteResponseHelper;
+    @Autowired
+    ContasRequestService contasRequestService;
     Logger logger = LogManager.getLogger(this.getClass());
 
     @Override
-    public ClienteResponse cadastrar(ClienteRequest request) {
+    public ClienteResponse cadastrar(@NotNull ClienteRequest request) {
         if (this.verificarDuplicidadeDeCpf(request.getCpf())){
             this.cpfValidar(request.getCpf());
             Cliente c = clienteRequestHelper.converterRequest(request);
@@ -54,10 +56,9 @@ public class ClientesServicesImpl implements ClienteServices {
         Optional<Cliente> cliente = repository.findById(id);
         if (cliente.isPresent()) {
             repository.deleteById(id);
-            logger.info("Cliente deletado com sucessso! ");
         } else {
             throw new ResponseStatusException
-                    (HttpStatus.FORBIDDEN, "Cliente não encontrado no sistema");
+                    (HttpStatus.NOT_FOUND, "Cliente não encontrado");
         }
     }
 
@@ -115,6 +116,11 @@ public class ClientesServicesImpl implements ClienteServices {
             logger.info("Cliente não consta em banco de dados! ");
         }
         return true;
+    }
+
+    public ContaDTO buscarContaPorId(String id){
+        ContaDTO conta = consultaConta(id);
+        return conta;
     }
 
     public String cpfValidar(String cpf) {

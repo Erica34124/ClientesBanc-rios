@@ -17,6 +17,9 @@ public class ContasRequestService {
         } catch (ResourceAccessException exception) {
             throw new ResponseStatusException
                     (HttpStatus.SERVICE_UNAVAILABLE, "Serviço inativo ");
+        } catch (Exception e) {
+            throw new ResponseStatusException
+                    (HttpStatus.NOT_FOUND, "Conta não encontrada");
         }
     }
 }
